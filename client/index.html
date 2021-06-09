@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bird Prediction App</title>
+</head>
+
+<body>
+    <h1>Predict bird</h1>
+    <form id="image-upload-form" method="post" enctype="multipart/form-data" action="http://localhost:5000/file">
+        <label>
+            <p>Upload image of magpie robin (দয়েল পাখি), baya weaver (বাবুই পাখি) or sparrow (চড়ুই পাখি)</p>
+            <input type="file" id="file-input" name="file" accept="image/png, image/jpeg" />
+        </label>
+        <button type="submit">Submit</button>
+    </form>
+    <p id="results"></p>
+</body>
+<script>
+    const url = "http://localhost:5000/image"
+
+    async function uploadFile(file) {
+        const formData = new FormData()
+        formData.append("file", file)
+        return await fetch(url, {
+            method: "POST",
+            body: formData
+        });
+    }
+
+    async function onSubmit(event) {
+        event.preventDefault()
+        const fileInput = document.getElementById("file-input")
+        const resultsContainer = document.getElementById("results")
+        selectedFile = fileInput.files[0]
+
+        const res = await uploadFile(selectedFile)
+        const data = await res.json()
+
+        if (data && data.prediction) {
+            resultsContainer.innerText = `Result: ${data.prediction}`
+        } else {
+            resultsContainer.innerText = "Prediction could not be fetched. Something went wrong"
+        }
+    }
+
+    const fileInputForm = document.getElementById("image-upload-form")
+    fileInputForm.addEventListener("submit", onSubmit)
+</script>
+
+</html>
