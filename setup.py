@@ -7,5 +7,5 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
-    install_requires=['Flask', 'Flask-Cors' 'ipython', 'numpy', 'fastai']
+    install_requires=['Flask', 'Flask-Cors' 'ipython', 'numpy', 'fastai', 'uwsgi']
 )

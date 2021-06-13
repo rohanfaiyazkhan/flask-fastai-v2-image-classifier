@@ -1,9 +1,9 @@
 import os
 from flask import Flask,  app, request, Response, render_template, jsonify
-from predict import predict_bird
-import config
+from flaskr.predict import predict_bird
+import flaskr.config as config
 from flask_cors import CORS
-from utils import allowed_file
+from flaskr.utils import allowed_file
 
 config_map = {
     'development': config.Development(),
