@@ -1,35 +1,30 @@
+import os
 from flask import Flask,  app, request, Response, render_template, jsonify
 from predict import predict_bird
+import config
 from flask_cors import CORS
+from utils import allowed_file
+
+config_map = {
+    'development': config.Development(),
+    'production': config.Production(),
+}
+
+flask_env = os.environ.get("FLASK_ENV") or "development"
+config_obj = config_map[flask_env.lower()]
 
 app = Flask(__name__)
+app.config.from_object(config_obj)
 app.secret_key = "SECRET_KEY"
 CORS(app)
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-# Create a URL route in our application for "/"
-
-
-@app.route('/')
-def home():
-    """
-    This function just responds to the browser ULR
-    localhost:5000/
-
-    :return:        the rendered template 'home.html'
-    """
-    return render_template('home.html')
-
-
-@app.route('/image', methods=['GET', 'POST'])
+@app.route('/image', methods=['POST'])
 def upload_file():
+    """
+    This function handles image uploads and predicts what type of bird the image is
+
+    """
     if request.method == 'POST':
         if 'file' not in request.files:
             print("No file part")
@@ -42,9 +37,8 @@ def upload_file():
             return Response("{'message':'No selected file'}", status=400, mimetype='application/json')
         if file and allowed_file(file.filename):
 
-            pred_value = predict_bird(file)
-            pred_res = jsonify({'prediction': pred_value})
-            print(pred_res)
+            pred, prob = predict_bird(file)
+            pred_res = jsonify({'prediction': pred, 'probability': prob})
             return pred_res
 
 

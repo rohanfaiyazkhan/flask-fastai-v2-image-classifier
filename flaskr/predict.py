@@ -11,11 +11,12 @@ learner = load_learner(model_path)
 def predict_bird(img):
     pred, pred_idx, probs = learner.predict(PILImage.create(img))
 
-    pred_value = f'Prediction: {pred}; Probability: {probs[pred_idx]:.04f}'
+    probability = f'{probs[pred_idx]:0.04f}'
+
 
     # print('Loaded learner')
     # print(learner.dls.vocab)
-    return pred_value
+    return (pred, probability)
 
 
 if __name__ == '__main__':

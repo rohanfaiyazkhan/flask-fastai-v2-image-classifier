@@ -37,12 +37,17 @@
         const resultsContainer = document.getElementById("results")
         selectedFile = fileInput.files[0]
 
-        const res = await uploadFile(selectedFile)
-        const data = await res.json()
+        try {
+            const res = await uploadFile(selectedFile)
+            const data = await res.json()
 
-        if (data && data.prediction) {
-            resultsContainer.innerText = `Result: ${data.prediction}`
-        } else {
+            if (data && data.prediction && data.probability) {
+                const prob = (data.probability * 100).toFixed(2)
+                resultsContainer.innerText = `The image is likely a ${data.prediction} with likelihood of ${prob}%`
+            } else {
+                resultsContainer.innerText = "Prediction could not be fetched. Something went wrong"
+            }
+        } catch (error) {
             resultsContainer.innerText = "Prediction could not be fetched. Something went wrong"
         }
     }
